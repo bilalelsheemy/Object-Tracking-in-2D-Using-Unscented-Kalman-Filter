@@ -24,13 +24,13 @@ public:
 
   ///* state vector: [pos1 pos2 vel_abs yaw_angle yaw_rate] in SI units and rad
   VectorXd x_;
-  VectorXd x_aug;
+
   ///* state covariance matrix
   MatrixXd P_;
-  MatrixXd P_aug;
+
   ///* predicted sigma points matrix
   MatrixXd Xsig_pred_;
-  MatrixXd Xsig_aug;
+
   ///* time when the state is true, in us
   long long time_us_;
 
@@ -67,9 +67,10 @@ public:
   ///* Sigma point spreading parameter
   double lambda_;
 
-  ///* Previous time stamp
-  long prev_timestamp;
-
+  // Radar NIS
+  double NIS_radar_;
+  // lASER NIS
+  double NIS_laser_;
   /**
    * Constructor
    */
@@ -91,7 +92,7 @@ public:
    * matrix
    * @param delta_t Time between k and k+1 in s
    */
-  void Prediction(double delta_t, MeasurementPackage meas_package);
+  void Prediction(double delta_t);
 
   /**
    * Updates the state and the state covariance matrix using a laser measurement
