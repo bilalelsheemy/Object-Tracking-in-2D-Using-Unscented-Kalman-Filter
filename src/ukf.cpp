@@ -23,13 +23,6 @@ UKF::UKF() {
   // time stamp initialization
   time_us_ = 0;
 
-  // Declaring state vector and augmented state vector
-  x_ = VectorXd::Zero(5);
-  x_aug = VectorXd::Zero(7);
-  // initial covariance matrix and augmented covariance matrix
-  P_ = MatrixXd::Zero(5, 5);
-  P_aug = MatrixXd::Zero(7, 7);
-
   // Process noise standard deviation longitudinal acceleration in m/s^2 (This value is tunable)
   std_a_ = 1;
   // Process noise standard deviation yaw acceleration in rad/s^2 (This value is tunable)
@@ -66,6 +59,13 @@ UKF::UKF() {
   // Initializing spreading parameter lambda
   lambda_ = 3 - n_aug_;
 
+  // Declaring state vector and augmented state vector
+  x_ = VectorXd::Zero(5);
+  x_aug = VectorXd::Zero(7);
+  // initial covariance matrix and augmented covariance matrix
+  P_ = MatrixXd::Zero(5, 5);
+  P_aug = MatrixXd::Zero(7, 7);
+  
   // Calculating Sigma points weights
   weights_ = VectorXd::Zero(2*n_aug_+1);
   double weight_0 = lambda_/(lambda_+n_aug_);
@@ -490,7 +490,7 @@ void UKF::UpdateRadar(MeasurementPackage meas_package) {
   // State Mean Update
   x_ = x_ + KG * (meas_diff);
 
-  // State covariance update 
+  // State covariance update
   P_ = P_ - (KG * radarmeas_covariance * KG.transpose());
 
 }

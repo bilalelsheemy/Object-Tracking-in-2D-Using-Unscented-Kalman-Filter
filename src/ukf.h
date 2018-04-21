@@ -24,13 +24,13 @@ public:
 
   ///* state vector: [pos1 pos2 vel_abs yaw_angle yaw_rate] in SI units and rad
   VectorXd x_;
-
+  VectorXd x_aug;
   ///* state covariance matrix
   MatrixXd P_;
-
-  ///* predicted sigma points matrix
+  MatrixXd P_aug;
+  ///* Generated & predicted sigma points matrix
+  MatrixXd Xsig_aug;
   MatrixXd Xsig_pred_;
-
   ///* time when the state is true, in us
   long long time_us_;
 
