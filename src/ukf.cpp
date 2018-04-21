@@ -61,11 +61,9 @@ UKF::UKF() {
 
   // Declaring state vector and augmented state vector
   x_ = VectorXd::Zero(5);
-  x_aug = VectorXd::Zero(7);
   // initial covariance matrix and augmented covariance matrix
   P_ = MatrixXd::Zero(5, 5);
-  P_aug = MatrixXd::Zero(7, 7);
-  
+
   // Calculating Sigma points weights
   weights_ = VectorXd::Zero(2*n_aug_+1);
   double weight_0 = lambda_/(lambda_+n_aug_);
@@ -136,7 +134,7 @@ void UKF::ProcessMeasurement(MeasurementPackage meas_package){
               meas_package.raw_measurements_(1),
               1,
               1,
-              0.1;
+              0;
 
         // skip initialization step in the next times
         is_initialized_ = true;
@@ -190,7 +188,6 @@ void UKF::Prediction(double delta_t) {
   */
   VectorXd state_update = VectorXd::Zero(5);
   MatrixXd P_root;
-  //double delta_t;
   double px;
   double py;
   double vel;
@@ -205,24 +202,22 @@ void UKF::Prediction(double delta_t) {
   double yawrate_update;
 
   //1- calculating augmented mean state
-  x_aug.fill(0.0);
+  x_aug = VectorXd::Zero(n_aug_);
   x_aug.head(5) = x_;
   x_aug(5) = 0;
   x_aug(6) = 0;
 
   //1- calculating augmented covariance matrix
-  P_aug.fill(0.0);
-  P_aug.topLeftCorner(5,5) = P_;
-
+  P_aug = MatrixXd::Zero(n_aug_, n_aug_);
+  P_aug.topLeftCorner(n_x_,n_x_) = P_;
   P_aug(5,5) = std_a_*std_a_;
   P_aug(6,6) = std_yawdd_*std_yawdd_;
-
 
   // Calculating the square root of the process noise
   P_root = P_aug.llt().matrixL();
 
   // Generate the sigma points for the initialized state
-  Xsig_aug = MatrixXd::Zero(7, 2*n_aug_+1);
+  MatrixXd Xsig_aug = MatrixXd::Zero(n_aug_, 2*n_aug_+1);
   Xsig_aug.col(0) =  x_aug;
 
   for (int i=0; i<n_aug_; i++)
